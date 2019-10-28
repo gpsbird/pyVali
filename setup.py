@@ -14,7 +14,7 @@ with open('./README.rst', encoding='utf-8') as f:
 
 setup(
     name="pyVali",
-    version="0.0.2",
+    version="0.0.3",
     author="gpsbird",
     author_email="gpsbird@qq.com",
     description="python parameter validate",

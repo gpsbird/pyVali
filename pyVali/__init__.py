@@ -139,7 +139,7 @@ class Str(object):
             return "{%s} 参数长度大于最大值:%s" % (self.comment, self.max_length), value
         if self.allow_empty is False and len(value) == 0:
             return "{%s} 参数不能为空" % self.comment, value
-        if self.pattern is not None and re.compile(self.pattern).match(value):
+        if self.pattern is not None and not re.compile(self.pattern).match(value):
             return "{%s} 参数不满足正则条件:%s" % (self.comment, self.pattern), value
         if self.enum is not None and value not in self.enum:
             return "{%s} 参数枚举值不合法" % self.comment, value
