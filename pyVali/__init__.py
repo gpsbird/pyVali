@@ -193,11 +193,11 @@ class Dict(object):
         if self.struct is not None:
             ret = {}
             for sub_key, sub_struct in self.struct.items():
-                err, sub_value = sub_struct.validate(value.get(sub_key, None))
-                if not err:
+                errMsg, sub_value = sub_struct.validate(value.get(sub_key, None))
+                if not errMsg:
                     ret[sub_key] = sub_value
                 else:
-                    return err, value
+                    return errMsg, value
             return "", ret
         return "", value
 
@@ -248,11 +248,11 @@ class List(object):
         if self.struct is not None:
             ret = []
             for sub_value in value:
-                err, sub_value = self.struct[0].validate(sub_value)
-                if not err:
+                errMsg, sub_value = self.struct[0].validate(sub_value)
+                if not errMsg:
                     ret.append(sub_value)
                 else:
-                    return err, value
+                    return errMsg, value
             return "", ret
 
         return "", value
@@ -260,8 +260,10 @@ class List(object):
 
 if __name__ == "__main__":
     value = {
-        "user_id": 123,
-        "tenant_id": 345,
+        "user_id": "32495732",
+        "score": 3.5,
+        "telephone": "13234566513",
+        "user_type": 3,
         "question_list": [{
             "question_id": "asdfsdf",
             "question": "你好？",
@@ -270,8 +272,10 @@ if __name__ == "__main__":
         }]
     }
     schema = Dict({
-        "user_id": Int(comment="用户id"),
-        "tenant_id": Int(comment="tenant_id"),
+        "user_id": Int(comment="用户id", ),
+        "score": Float(comment="用户评分", min_value=0, max_value=5, required=False),
+        "telephone": Str(comment="用户电话号码", min_length=11, max_length=11, pattern=r"^1[3456789]\d{9}$"),
+        "user_type": Int(comment="用户类型", enum=[0, 1, 2, 3]),
         "question_list": List(
             struct=[Dict(
                 {"question_id": Str(comment="问题id"),
@@ -279,21 +283,9 @@ if __name__ == "__main__":
                  "answer": Str(comment="回答"),
                  "status": Int(comment="状态")},
                 comment="问题")],
-            comment="问题列表")
+            comment="问题列表", )
     })
-
-    print(schema.validate(value))
-
-    sub_schema = Dict(struct={"question_id": Str(comment="问题id"),
-                              "question": Str(comment="问题"),
-                              "answer": Str(comment="回答"),
-                              "status": Int(comment="状态")},
-                      comment="问题")
-    schema = Dict({
-        "user_id": Int(comment="用户id"),
-        "tenant_id": Int(comment="tenant_id"),
-        "question_list": List(
-            struct=[sub_schema, ],
-            comment="问题列表")
-    })
-    err, value = schema.validate(value)
+    errMsg, value = schema.validate(value)
+    if errMsg:
+        raise Exception(errMsg)
+    print(errMsg, '====', value)

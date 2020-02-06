@@ -34,8 +34,8 @@ pyVali
                 comment="问题")],
             comment="问题列表", )
     })
-    err, value = schema.validate(value)
-    if err:
-        raise Exception(err)
-    print(err, value)
+    errMsg, value = schema.validate(value)
+    if errMsg:
+        raise Exception(errMsg)
+    print(errMsg, value)
 
